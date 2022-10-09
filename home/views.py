@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required
 from helper import complete_profile_required, check_issue_time_limit
 from project.forms import PRSubmissionForm
 from django.utils import timezone
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 
 # TODO:ISSUE: Replace each HttpResponse with a HTML page
@@ -24,14 +25,23 @@ from user_profile.models import UserProfile
 def home(request):
     global issues_qs, domain, subdomain
     project_qs = Project.objects.all()
-    issues_qs = Issue.objects.all()
+    issues_qs = Issue.objects.all().order_by('id')
+    page_number = request.GET.get('page', 1)
+    paginator = Paginator(issues_qs, 2)
+    try:
+        issues_paginated = paginator.page(page_number)
+    except PageNotAnInteger:
+        issues_paginated = paginator.page(1)
+    except EmptyPage:
+        issues_paginated = paginator.page(paginator.num_pages)
     domains_qs = Domain.objects.all()
     subdomains_qs = SubDomain.objects.all()
     domain = 'All'
     subdomain = 'All'
     context = {
         'projects': project_qs,
-        'issues': issues_qs,
+        'issues1': issues_qs,
+        'issues': issues_paginated,
         'domains': domains_qs,
         'subdomains': subdomains_qs,
         'curr_domain': domain,
@@ -46,12 +56,21 @@ def filter_by_domain(request, domain_pk):
     subdomain = 'All'
     domain = Domain.objects.get(pk=domain_pk)
     project_qs = Project.objects.all()
-    issues_qs = Issue.objects.filter(project__domain=domain)
+    issues_qs = Issue.objects.filter(project__domain=domain).order_by('id')
+    page_number = request.GET.get('page', 1)
+    paginator = Paginator(issues_qs, 2)
+    try:
+        issues_paginated = paginator.page(page_number)
+    except PageNotAnInteger:
+        issues_paginated = paginator.page(1)
+    except EmptyPage:
+        issues_paginated = paginator.page(paginator.num_pages)
     domains_qs = Domain.objects.all()
     subdomains_qs = SubDomain.objects.all()
     context = {
         'projects': project_qs,
-        'issues': issues_qs,
+        'issues1': issues_qs,
+        'issues': issues_paginated,
         'domains': domains_qs,
         'subdomains': subdomains_qs,
         'curr_domain': domain,
@@ -66,13 +85,22 @@ def filter_by_subdomain(request, subdomain_pk):
     subdomain = SubDomain.objects.get(pk=subdomain_pk)
     project_qs = Project.objects.all()
     if domain != 'All':
-        issues_qs = Issue.objects.filter(project__domain=domain)
+        issues_qs = Issue.objects.filter(project__domain=domain).order_by('id')
     issues_qs = issues_qs.filter(project__subdomain=subdomain)
+    page_number = request.GET.get('page', 1)
+    paginator = Paginator(issues_qs, 2)
+    try:
+        issues_paginated = paginator.page(page_number)
+    except PageNotAnInteger:
+        issues_paginated = paginator.page(1)
+    except EmptyPage:
+        issues_paginated = paginator.page(paginator.num_pages)
     domains_qs = Domain.objects.all()
     subdomains_qs = SubDomain.objects.all()
     context = {
         'projects': project_qs,
-        'issues': issues_qs,
+        'issues1': issues_qs,
+        'issues': issues_paginated,
         'domains': domains_qs,
         'subdomains': subdomains_qs,
         'curr_domain': domain,

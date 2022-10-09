@@ -80,9 +80,9 @@
         </button> -->
 
         <div id="cardview">
-            <div class="row row-cols-1 row-cols-md-2">
+            <div class="row row-cols-1 row-cols-md-2 infinite-container">
                 {% for issue in issues %}
-                <div class="col">
+                <div class="col infinite-item">
                     <div class="card m-3 text-center" style="border-radius: 15px;">
                         <div class="card-header">
                         Issue #{{ issue.number }} - {{ issue.project.domain }}
@@ -128,6 +128,11 @@
                 </div>
                 {% endfor %}
             </div>
+            {% if issues.has_next %}
+                <a class="infinite-more-link" href="?page={{ issues.next_page_number }}">More</a>
+            {% endif %}
+
+            <div class="loading" style="display: none;"></div>
         </div>
         <div id="tabularview" class="mx-4" style="display: none;">
             <div class="row row-cols-1 row-cols-md-2" style="margin-top: 0.8rem;">
@@ -145,7 +150,7 @@
                         </tr>
                     </thead>
                     
-                    {% for issue in issues %}
+                    {% for issue in issues1 %}
                         <tbody class="bg-light">
                         <tr class="align-middle text-center">
                             <th scope="row">{{ issue.number }}</th>
@@ -193,8 +198,30 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
     $("#toggle-view").click(function(){
-        console.log("hello");
         $("#tabularview, #cardview").toggle();
+    });
+</script>
+
+<script>
+    var infinite = new Waypoint.Infinite({
+        element: $('.infinite-container')[0],
+        onBeforePageLoad: function () {
+            $('.loading').show();
+        },
+        onAfterPageLoad: function ($items) {
+            $('.loading').hide();
+        }
+    });
+</script>
+<script>
+    var infinite = new Waypoint.In({
+        element: $('.infinite-container')[0],
+        onBeforePageLoad: function () {
+            $('.loading').show();
+        },
+        onAfterPageLoad: function ($items) {
+            $('.loading').hide();
+        }
     });
 </script>
 {% endblock %}
