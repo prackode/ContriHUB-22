@@ -1,7 +1,9 @@
-from django.shortcuts import render, HttpResponseRedirect, reverse, HttpResponse
+from django.shortcuts import render, HttpResponseRedirect, reverse, HttpResponse, redirect
+from django.core.mail import EmailMessage, send_mail, BadHeaderError
 
 from home.helpers import send_email
 from django.core import mail
+from django.template.loader import render_to_string
 
 from project.models import Project, Issue, IssueAssignmentRequest, ActiveIssue, PullRequest, Domain, SubDomain
 from django.contrib.auth import logout
@@ -19,6 +21,7 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 # TODO:ISSUE: Make a Custom Http404 Page
 # TODO:ISSUE: Up-vote Down-vote Issue Feature
 from user_profile.models import UserProfile
+from .forms import ContactForm
 
 
 @complete_profile_required
@@ -361,3 +364,22 @@ def reject_pr(request, pk):
         message = "This PR Verification Request is already Accepted/Rejected. Probably in the FrontEnd You still see \
                     the "  "Accept/Reject Button, because showing ACCEPTED/REJECTED status in frontend is an ISSUE."
     return HttpResponse(message)
+
+
+@login_required
+def contact_form(request):
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        user = form['name'].value()
+        email = form['email'].value()
+        body = form['body'].value()
+        subject = form['subject'].value()
+        message = 'Name: {}\nEmail: {}\n\n{}'.format(user, email, body)
+        try:
+            send_mail(subject, message, '', ['contrihub.avishkar@gmail.com'])
+        except BadHeaderError:
+            return HttpResponse('Mail could not be sent. Try again later!!')
+        return redirect('home')
+    elif request.method == 'GET':
+        form = ContactForm()
+        return render(request, 'home/contact_form.html', context={'form': form})
