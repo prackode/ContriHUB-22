@@ -27,7 +27,7 @@ def home(request):
     project_qs = Project.objects.all()
     issues_qs = Issue.objects.all().order_by('id')
     page_number = request.GET.get('page', 1)
-    paginator = Paginator(issues_qs, 2)
+    paginator = Paginator(issues_qs, 6)
     try:
         issues_paginated = paginator.page(page_number)
     except PageNotAnInteger:
@@ -58,7 +58,7 @@ def filter_by_domain(request, domain_pk):
     project_qs = Project.objects.all()
     issues_qs = Issue.objects.filter(project__domain=domain).order_by('id')
     page_number = request.GET.get('page', 1)
-    paginator = Paginator(issues_qs, 2)
+    paginator = Paginator(issues_qs, 6)
     try:
         issues_paginated = paginator.page(page_number)
     except PageNotAnInteger:
@@ -88,7 +88,7 @@ def filter_by_subdomain(request, subdomain_pk):
         issues_qs = Issue.objects.filter(project__domain=domain).order_by('id')
     issues_qs = issues_qs.filter(project__subdomain=subdomain)
     page_number = request.GET.get('page', 1)
-    paginator = Paginator(issues_qs, 2)
+    paginator = Paginator(issues_qs, 6)
     try:
         issues_paginated = paginator.page(page_number)
     except PageNotAnInteger:
