@@ -42,34 +42,11 @@
       rel="stylesheet"
     />
 
-    {% include 'css.html' %}
-    <style>
-        {# TODO:ISSUE Move styles to separate CSS file #}
-        html {
-            height:100%;
-        }
-        body {
-            height:100%;
-            padding: 0;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            overflow: auto;
-            background: url('{% static "images/body/background.jpg" %}');
-            background-size: cover;
-        }
+    <link href="{% static 'css/base.css' %}" rel="stylesheet" />
 
-        .btn {
-          text-transform: unset !important;
-        }
-        ul.nav-tabs li.nav-item a.nav-link {color:#292b2c;background-color:white;}
-        ul.nav-tabs li.nav-item a.nav-link:focus {color:white; background-color:#292b2c;}
-        ul.nav-tabs li.nav-item a.nav-link:hover {color:white; background-color:#292b2c;}
-        #frm {
-          display: none;
-        }
-        {% block style %}
-        {% endblock %}
+    <style>
+      {% block style %}
+      {% endblock %}
     </style>
     <title>
         {% block title %}

@@ -1,0 +1,142 @@
+html {
+  height: 100%;
+}
+body {
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  background: url("../images/body/background.jpg");
+  background-size: cover;
+}
+
+.btn {
+  text-transform: unset !important;
+}
+ul.nav-tabs li.nav-item a.nav-link {
+  color: #292b2c;
+  background-color: white;
+}
+ul.nav-tabs li.nav-item a.nav-link:focus {
+  color: white;
+  background-color: #292b2c;
+}
+ul.nav-tabs li.nav-item a.nav-link:hover {
+  color: white;
+  background-color: #292b2c;
+}
+#frm {
+  display: none;
+}
+.authorize-container {
+  display: flex;
+  justify-content: center;
+  margin-top: auto;
+}
+
+.authorize-link {
+  background-color: #333333;
+}
+.form-container {
+  max-width: 75%;
+}
+
+.announcement-container {
+  border-radius: 15px;
+}
+.toggle-container {
+  background-color: rgba(0, 0, 0, 0.2);
+  margin: 0 1rem;
+}
+.cardview-container {
+  border-radius: 15px;
+}
+.tabularview-container {
+  display: none;
+}
+.tablerow-container {
+  margin-top: 0.8rem;
+}
+.toast-container {
+  z-index: 11;
+}
+.dropdown-menu li {
+  position: relative;
+}
+.dropdown-menu .dropdown-submenu {
+  display: none;
+  position: absolute;
+  left: 100%;
+  top: -7px;
+}
+.dropdown-menu .dropdown-submenu-left {
+  right: 100%;
+  left: auto;
+}
+.dropdown-menu > li:hover > .dropdown-submenu {
+  display: block;
+}
+.project-dropdown {
+  width: 500px;
+}
+.footer-container {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+.message-container {
+  color: crimson;
+}
+.heading-text {
+  color: #39ff14;
+}
+.ranking-heading {
+  text-align: center;
+}
+.ranking-table {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+.profile-link {
+  border-bottom-left-radius: 7px;
+  border-top-left-radius: 7px;
+}
+.issue-container {
+  border-radius: 15px;
+}
+.profile-avatar {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-top-left-radius: 0.5rem;
+  border-bottom-left-radius: 0.5rem;
+}
+.edit-form {
+  border-radius: 0.25rem;
+  border: 1px solid #bdbdbd;
+}
+.label-style {
+  transform: translateY(-1rem) translateY(0.1rem) scale(0.8);
+}
+.darkgreen-col {
+  color: darkgreen;
+}
+.crimson-col {
+  color: crimson;
+}
+.edit-form-container {
+  top: 20%;
+  left: 0;
+  display: none;
+}
+.edit-form-style {
+  background-color: white;
+  max-width: 800px;
+  border-radius: 10px;
+}
+.form-div-style {
+  top: 0;
+  left: 0;
+  background-color: black;
+  opacity: 0.5;
+  display: none;
+}

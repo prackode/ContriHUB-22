@@ -2,18 +2,9 @@
   <div class="container py-5 h-100">
     <div class="row d-flex justify-content-center align-items-center h-100">
       <div class="col col-lg-6 mb-4 mb-lg-0">
-        <div class="card mb-3" style="border-radius: 0.5rem">
+        <div class="card mb-3 rounded">
           <div class="row g-0">
-            <div
-              class="col-md-4 gradient-custom text-center"
-              style="
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                border-top-left-radius: 0.5rem;
-                border-bottom-left-radius: 0.5rem;
-              "
-            >
+            <div class="col-md-4 gradient-custom text-center profile-avatar">
               <img src="https://github.com/{{ native_profile.user.username }}.png">
               <h5>
                 {{ native_profile.user.first_name }} 
@@ -92,31 +83,14 @@
   </div>
   {% if user.username == native_profile.user.username and user.userprofile.role == user.userprofile.STUDENT %}
       <div 
-        class="position-fixed w-100 h-100 edit-profile-modal-blur"
-        style="
-          top: 0;
-          left: 0;
-          background-color: black;
-          opacity: 0.5;
-          display: none;
-        "
+        class="position-fixed w-100 h-100 edit-profile-modal-blur form-div-style"
       >
       </div>
       <div 
-        class="position-fixed w-100 edit-profile-modal"
-        style="
-          top: 20%;
-          left: 0;
-          display: none;
-        "
+        class="position-fixed w-100 edit-profile-modal edit-form-container"
       >
         <form
-          class="px-3 py-4 w-100 mx-auto"
-          style="
-            background-color: white;
-            max-width: 800px;
-            border-radius: 10px;
-          "
+          class="px-3 py-4 w-100 mx-auto edit-form-style"
         >
           <div class="row">
             <div class="col-10 text-center">
@@ -132,8 +106,8 @@
             <label class="form-label" for="edit-linkedin">LinkedIn ID</label>
           </div>
 
-          <p class="text-center font-italic edit-linkedin-success" style="color: darkgreen;"></p>
-          <p class="text-center font-italic edit-linkedin-error" style="color: crimson;"></p>
+          <p class="text-center font-italic edit-linkedin-success darkgreen-col"></p>
+          <p class="text-center font-italic edit-linkedin-error crimson-col"></p>
         
           <button class="btn btn-primary btn-block mb-4 w-75 mx-auto" onclick="editLinkedInID(event);">Edit</button>
 
@@ -158,12 +132,8 @@
             <div class="col-12 col-md-6">
               <div class="form-outline">
                 <select 
-                  class="form-control" 
-                  id="edit-year" 
-                  style="
-                    border-radius: 0.25rem;
-                    border: 1px solid #bdbdbd;
-                  "
+                  class="form-control edit-form" 
+                  id="edit-year"
                 >
                   {% for year in student_years %}
                     {% if year.1 == native_profile.get_current_year_display %}
@@ -173,18 +143,14 @@
                     {% endif %}
                   {% endfor %}
                 </select>
-                <label class="form-label" for="edit-year" style="transform: translateY(-1rem) translateY(0.1rem) scale(.8);">Year</label>
+                <label class="form-label label-style" for="edit-year">Year</label>
               </div>
             </div>
             <div class="col-12 col-md-6 mt-2 mt-md-0">
               <div class="form-outline">
                 <select 
-                  class="form-control" 
+                  class="form-control edit-form" 
                   id="edit-course" 
-                  style="
-                    border-radius: 0.25rem;
-                    border: 1px solid #bdbdbd;
-                  "
                 >
                   {% for course in student_courses %}
                     {% if course.1 == native_profile.get_course_display %}
@@ -194,13 +160,13 @@
                     {% endif %}
                   {% endfor %}
                 </select>
-                <label class="form-label" for="edit-course" style="transform: translateY(-1rem) translateY(0.1rem) scale(.8);">Course</label>
+                <label class="form-label label-style" for="edit-course">Course</label>
               </div>
             </div>
           </div>
 
-          <p class="text-center font-italic edit-profile-success" style="color: darkgreen;"></p>
-          <p class="text-center font-italic edit-profile-error" style="color: crimson;"></p>
+          <p class="text-center font-italic edit-profile-success darkgreen-col"></p>
+          <p class="text-center font-italic edit-profile-error crimson-col"></p>
 
           <button class="btn btn-primary btn-block mb-4 w-75 mx-auto" onclick="editProfile(event);">Submit Request</button>
         </form>

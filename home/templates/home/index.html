@@ -23,7 +23,7 @@
     <div class="container-flow p-3" >
     <div class="row row-cols-1 row-cols-md-1">
                 <div class="col">
-                    <div class="card m-3" style="border-radius: 15px;">
+                    <div class="card m-3 announcement-container">
                         <div class="card-header text-center">
                             <h6>Announcements!</h6>
                         </div>
@@ -64,7 +64,7 @@
                     </div>
                 </div>
         </div>
-        <div class="d-flex justify-content-center shadow-lg p-3 rounded text-center" style="background-color: rgba(0, 0, 0, 0.2);margin: 0 1rem;">
+        <div class="d-flex justify-content-center shadow-lg p-3 rounded text-center toggle-container">
             <div class="bg-transparent py-3 px-3 row row-cols-1 row-cols-md-3 text-white ">
                 <div class="col align-self-center"><i class="lni lni-grid-alt"></i></div>
                 <div class="col align-self-center">
@@ -80,7 +80,7 @@
             <div class="row row-cols-1 row-cols-md-2">
                 {% for issue in issues %}
                 <div class="col">
-                    <div class="card m-3 text-center" style="border-radius: 15px;">
+                    <div class="card m-3 text-center cardview-container">
                         <div class="card-header">
                         Issue #{{ issue.number }} - {{ issue.project.domain }}
                         {% if issue.project.subdomain != None %}
@@ -151,8 +151,8 @@
                 {% endfor %}
             </div>
         </div>
-        <div id="tabularview" class="mx-4" style="display: none;">
-            <div class="row row-cols-1 row-cols-md-2" style="margin-top: 0.8rem;">
+        <div id="tabularview" class="mx-4 tabularview-container">
+            <div class="row row-cols-1 row-cols-md-2 tablerow-container">
                 <table class="table">
                     <thead class="bg-dark text-white">
                         <tr class="align-middle text-center">
@@ -232,7 +232,7 @@
             </div>
         </div>
     </div>
-    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <div class="position-fixed bottom-0 end-0 p-3 toast-container">
         <div id="liveToastlike" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header">
             <strong class="me-auto fs-5">You liked this Issue</strong>
@@ -241,7 +241,7 @@
             
         </div>
     </div>
-   <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+   <div class="position-fixed bottom-0 end-0 p-3 toast-container">
         <div id="liveToastdislike" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header">
             <strong class="me-auto fs-5">You disliked this Isssue</strong>

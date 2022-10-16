@@ -1,23 +1,6 @@
 <!-- Navbar -->
 {% load static %}
-<style>
-  .dropdown-menu li {
-    position: relative;
-    }
-    .dropdown-menu .dropdown-submenu {
-    display: none;
-    position: absolute;
-    left: 100%;
-    top: -7px;
-    }
-    .dropdown-menu .dropdown-submenu-left {
-    right: 100%;
-    left: auto;
-    }
-    .dropdown-menu > li:hover > .dropdown-submenu {
-    display: block;
-    } 
-</style>
+
 <nav class="navbar navbar-expand-lg navbar-light bg-transparent">
   <!-- Container wrapper -->
   <div class="container-fluid">
@@ -80,10 +63,10 @@
                       </button>
                       <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
                         {% for project in projects %}
-                            <li class="" style="width: 500px">
+                            <li class="project-dropdown">
                                 <span class="dropdown-item-text">
                                     <button type="button" class="btn btn-secondary p-1" data-mdb-ripple-color="dark">
-                                        <a class='text-white' href="{{ project.html_url }}" target="_blank"> {# style="color: white"  #}
+                                        <a class='text-white' href="{{ project.html_url }}" target="_blank">
                                            <b>{{ project.name }}</b> [ {{ project.domain }} ]
                                         </a>
                                     </button>
