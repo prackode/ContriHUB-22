@@ -11,7 +11,9 @@ body {
   background: url("../images/body/background.jpg");
   background-size: cover;
 }
-
+b {
+  font-weight: 400;
+}
 .btn {
   text-transform: unset !important;
 }
