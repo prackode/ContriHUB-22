@@ -1,12 +1,14 @@
 from django.shortcuts import render, HttpResponseRedirect, reverse, HttpResponse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
-from project.models import Issue, PullRequest, IssueAssignmentRequest, ActiveIssue
+import requests
+from project.models import Issue, Project, PullRequest, IssueAssignmentRequest, ActiveIssue
+from project.views import parse_level
 from .forms import UserProfileForm
 from .models import UserProfile
 from home.helpers import EmailThread_to_admin
 from helper import complete_profile_required, check_issue_time_limit
-from project.forms import PRJudgeForm, PRSubmissionForm
+from project.forms import PRJudgeForm, PRSubmissionForm, CreateIssueForm
 from django.contrib import messages
 import json
 import re
@@ -192,3 +194,88 @@ def rankings(request):
     }
     # TODO:ISSUE: Display number of Issues solved as well in the Rankings
     return render(request, 'user_profile/rankings.html', context=context)
+
+
+@login_required
+def create_issue(request):
+    if request.method == 'POST':
+        level = {
+            '0': 'free',
+            '1': 'easy',
+            '2': 'medium',
+            '3': 'hard',
+            '4': 'very_easy'
+        }
+        form = CreateIssueForm(request.POST)
+        project_id = form['project'].value()
+        level_id = form['level'].value()
+        mentor_id = form['mentor'].value()
+        points = form['points'].value()
+        is_restricted_str = form['is_restricted'].value()
+        default_points = parse_level(level.get(level_id))
+        title = form['title'].value()
+        description = form['description'].value()
+
+        is_default_points_used = False
+        if points == '0':
+            is_default_points_used = True
+            points = str(default_points[1])
+        is_restricted = False
+        if is_restricted_str == '1':
+            is_restricted = True
+
+        project = Project.objects.get(id=project_id)
+        level = level.get(level_id)
+        mentor = User.objects.get(id=mentor_id).username
+        url = project.api_url
+
+        labels = [mentor, level]
+
+        if not is_default_points_used:
+            labels.append(points)
+
+        if is_restricted:
+            labels.append('restricted')
+
+        url += '/issues'
+
+        issue_detail = {
+            'title': title,
+            'body': description,
+            'labels': labels
+        }
+        social = request.user.social_auth.get(provider='github')
+        headers = {
+            "Authorization": "token {}".format(social.extra_data['access_token']),
+        }
+        r = requests.post(url, data=json.dumps(issue_detail), headers=headers)
+        response_data = r.json()
+        # print(r)
+        if r.status_code == 201:
+            print('Successfully created Issue "%s"' % title)
+            Issue.objects.create(
+                title='' + response_data['title'],
+                api_url='' + response_data['repository_url'],
+                html_url='' + response_data['url'],
+                project=project,
+                mentor=User.objects.get(id=mentor_id),
+                level=level_id,
+                points=points,
+                state=1,
+                description=description,
+                is_restricted=is_restricted
+            )
+            msg="Successfully created Issue: {}".format(title)
+            messages.success(request, msg)
+            return HttpResponseRedirect(reverse('user_profile', kwargs={'username': request.user.username}))
+        else:
+            print('Could not create Issue "%s"' % title)
+            print('Response:', r.content)
+            messages.error(request, "Error while creating the issue!!")
+            return HttpResponseRedirect(reverse('user_profile', kwargs={'username': request.user.username}))
+    elif request.method == 'GET':
+        if request.user.userprofile.role == UserProfile.STUDENT:
+            messages.error(request, "Student cannot create an issue!!")
+            return HttpResponseRedirect(reverse('user_profile', kwargs={'username': request.user.username}))
+        form = CreateIssueForm()
+        return render(request, 'user_profile/create_issue.html', context={'form': form})

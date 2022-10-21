@@ -1,18 +1,18 @@
 {% extends 'base.html' %} 
-{% load static %} 
+{% load static %}
 
-{% load crispy_forms_tags %} 
+{% load crispy_forms_tags %}
 
 {% block title %} 
-    Contact Form 
+    Create Issue
 {% endblock %} 
 
 {% block content %} 
-    {% include "home/navbar.html" %}
+    {% include "user_profile/navbar-profile.html" %}
     <div class="container-flow">
-        <div class="container-lg bg-white rounded p-4" style="max-width: 75%;">
+        <div class="container-lg bg-white rounded p-4" style="max-width: 60%;">
             <form method='POST'>
-                <h3 class="text-center">Contact Us</h3>
+                <h3 class="text-center">Create Issue</h3>
                 {% csrf_token %}
                 {{ form | crispy }}
                 <div class="row p-2 text-center">

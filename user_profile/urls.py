@@ -7,4 +7,5 @@ urlpatterns = [
     path('user/linkedin_id/edit/', views.edit_linkedin_id, name='edit_linkedin_id'),
     path('user/details/edit/', views.edit_profile, name='edit_profile'),
     path('rankings/', views.rankings, name='rankings'),
+    path('create_issue/', views.create_issue, name='create_issue'),
 ]
