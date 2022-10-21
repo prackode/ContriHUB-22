@@ -265,7 +265,7 @@ def create_issue(request):
                 description=description,
                 is_restricted=is_restricted
             )
-            msg="Successfully created Issue: {}".format(title)
+            msg = "Successfully created Issue: {}".format(title)
             messages.success(request, msg)
             return HttpResponseRedirect(reverse('user_profile', kwargs={'username': request.user.username}))
         else:
