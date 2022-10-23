@@ -32,8 +32,43 @@ Profile @{{ native_profile.user.username }}
 
         {% if user.username == native_profile.user.username %}
             {% if user.userprofile.role == user.userprofile.STUDENT %}
-                <div class="text-center"><h1 class="display-6 text-white"><b>Currently Active Issues</b></h1></div>
-                            <div class="container-flow p-3" >
+            <div class="d-flex align-items-center justify-content-center">
+                <ul class="nav nav-tabs mb-3" id="ex1" role="tablist">
+                    <li class="nav-item" role="presentation">
+                    <a style="border-bottom-left-radius:7px;border-top-left-radius:7px;" class="nav-link" id="ex1-tab-1" data-mdb-toggle="tab" href="#ex1-tabs-1" role="tab" aria-controls="ex1-tabs-1" aria-selected="true" >
+                        <div class="text-center"><b>Currently Active Issues</b></div></a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                    <a
+                        class="nav-link"
+                        id="ex1-tab-2"
+                        data-mdb-toggle="tab"
+                        href="#ex1-tabs-2"
+                        role="tab"
+                        aria-controls="ex1-tabs-2"
+                        aria-selected="false"
+                        >
+                        <div class="text-center"><b>Your Assignment Requests</b></div></a
+                    >
+                    </li>
+                    <li class="nav-item" role="presentation">
+                    <a
+                        style="border-bottom-right-radius:7px;border-top-right-radius:7px;"
+                        class="nav-link"
+                        id="ex1-tab-3"
+                        data-mdb-toggle="tab"
+                        href="#ex1-tabs-3"
+                        role="tab"
+                        aria-controls="ex1-tabs-3"
+                        aria-selected="false"
+                        >
+                        <div class="text-center"><b>PRs Submitted</b></div></a
+                    >
+                    </li>
+                </ul>
+            </div>
+            <div class="tab-content" id="ex1-content">
+                    <div class="container-flow p-3 tab-pane fade" id="ex1-tabs-1" role="tabpanel" aria-labelledby="ex1-tab-1" >
                     <div class="row row-cols-1 row-cols-md-2">
                         {% for active_issue in active_issues %}
                             <div class="col">
@@ -80,10 +115,7 @@ Profile @{{ native_profile.user.username }}
                     </div>
                 </div>
 
-
-                <div class="text-center"><h1 class="display-6 text-white"><b>Your Assignment Requests</b></h1></div>
-
-                <div class="container-flow p-3" >
+                <div class="container-flow p-3 tab-pane fade" id="ex1-tabs-2" role="tabpanel" aria-labelledby="ex1-tab-2">
                     <div class="row row-cols-1 row-cols-md-2">
                         {% for request in assignment_requests_by_student %}
                             <div class="col">
@@ -128,10 +160,7 @@ Profile @{{ native_profile.user.username }}
                         {% endfor %}
                     </div>
                 </div>
-
-                <div class="text-center"><h1 class="display-6 text-white"><b>PRs Submitted</b></h1></div>
-
-                <div class="container-flow p-3" >
+                <div class="container-flow p-3 tab-pane fade" id="ex1-tabs-3" role="tabpanel" aria-labelledby="ex1-tab-3">
                     <div class="row row-cols-1 row-cols-md-2">
                         {% for pr in pr_requests_by_student %}
                             <div class="col">
@@ -159,25 +188,73 @@ Profile @{{ native_profile.user.username }}
 
                                   </div>
                                     <div class="card-footer text-muted">
+                                        <button class="btn btn-primary btn-rounded mt-0" data-mdb-toggle="tooltip" title="View PR">
+                                            <a class="text-white" href="{{ pr.pr_link }}"><i class="fas fa-eye"></i></a>
+                                        </button>
                                         {% if pr.state == pr.ACCEPTED %}
                                             <a class="btn btn-rounded btn-success">{{ pr.get_state_display }}</a>
+                                            <form method="get" action="">
+                                                <a class="btn btn-primary btn-success" data-mdb-toggle="tooltip" title="Bonus Points">{{ pr.bonus }}</a>
+                                                <a class="btn btn-primary btn-danger" data-mdb-toggle="tooltip" title="Penalty Points">{{ pr.penalty }}</a>
+                                                <a class="btn btn-primary" data-mdb-toggle="tooltip" title="Remark">{{ pr.remark }}</a>
+                                            </form>
                                         {% elif pr.state == pr.REJECTED %}
                                             <a class="btn btn-rounded btn-danger">{{ pr.get_state_display }}</a>
+                                            <form method="get" action="">
+                                                <a class="btn btn-primary btn-success" data-mdb-toggle="tooltip" title="Bonus Points">{{ pr.bonus }}</a>
+                                                <a class="btn btn-primary btn-danger" data-mdb-toggle="tooltip" title="Penalty Points">{{ pr.penalty }}</a>
+                                                <a class="btn btn-primary" data-mdb-toggle="tooltip" title="Remark">{{ pr.remark }}</a>
+                                            </form>
                                         {% elif pr.state == pr.PENDING_VERIFICATION %}
                                             <a class="btn btn-rounded btn-warning">{{ pr.get_state_display }}</a>
                                         {% endif %}
-                                        <button class="btn btn-primary btn-rounded mt-0" data-mdb-toggle="tooltip" title="View PR">
-                                            <a class="text-white" href="{{ pr.pr_link }}" target="_blank"><i class="fas fa-eye"></i></a>
-                                        </button>
+
                                     </div>
                                 </div>
                             </div>
                         {% endfor %}
                     </div>
                 </div>
+                
+            </div>
             {% else %}
-                <div class="text-center"><h1 class="display-6 text-white"><b>PR Verification Requests</b></h1></div>
-                <div class="container-flow p-3" >
+            <div class="d-flex align-items-center justify-content-center">
+                <ul class="nav nav-tabs mb-3" id="ex1" role="tablist">
+                    <li class="nav-item" role="presentation">
+                    <a style="border-bottom-left-radius:7px;border-top-left-radius:7px;" class="nav-link active" id="ex1-tab-1" data-mdb-toggle="tab" href="#ex1-tabs-1" role="tab" aria-controls="ex1-tabs-1" aria-selected="true" >
+                        <div class="text-center"><b>PR Verification Requests</b></div></a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                    <a
+                        class="nav-link"
+                        id="ex1-tab-2"
+                        data-mdb-toggle="tab"
+                        href="#ex1-tabs-2"
+                        role="tab"
+                        aria-controls="ex1-tabs-2"
+                        aria-selected="false"
+                        >
+                        <div class="text-center"><b>Issue Assignment Requests</b></div></a
+                    >
+                    </li>
+                    <li class="nav-item" role="presentation">
+                    <a
+                        style="border-bottom-right-radius:7px;border-top-right-radius:7px;"
+                        class="nav-link"
+                        id="ex1-tab-3"
+                        data-mdb-toggle="tab"
+                        href="#ex1-tabs-3"
+                        role="tab"
+                        aria-controls="ex1-tabs-3"
+                        aria-selected="false"
+                        >
+                        <div class="text-center"><b>All Issues Under Me</b></div></a
+                    >
+                    </li>
+                </ul>
+            </div>
+            <div class="tab-content" id="ex1-content">
+                <div class="container-flow p-3 tab-pane fade show active" id="ex1-tabs-1" role="tabpanel" aria-labelledby="ex1-tab-1" >
                     <div class="row row-cols-1 row-cols-md-2">
                         {% for pr in pr_requests_for_mentor %}
                             <div class="col">
@@ -205,35 +282,45 @@ Profile @{{ native_profile.user.username }}
 
                                   </div>
                                     <div class="card-footer text-muted">
-                                        {% if pr.state == pr.ACCEPTED %}
-                                            <a class="btn btn-rounded btn-success">{{ pr.get_state_display }}</a>
-                                        {% elif pr.state == pr.REJECTED %}
-                                            <a class="btn btn-rounded btn-danger">{{ pr.get_state_display }}</a>
-                                        {% elif pr.state == pr.PENDING_VERIFICATION %}
-                                            <a class="btn btn-rounded btn-warning">{{ pr.get_state_display }}</a>
-                                        {% endif %}
-                                    {# TODO: ISSUE: Disable these buttons from Frontend if PR is already accepted/rejected #}
-                                        <button class="btn btn-success mt-0">
-                                            <a class="text-white" href="{% url 'accept_pr' pr.pk %}">
-                                                Accept
-                                            </a>
-                                        </button>
-                                        <button class="btn btn-danger mt-0">
-                                            <a class="text-white" href="{% url 'reject_pr' pr.pk %}">Reject</a>
-                                        </button>
                                         <button class="btn btn-primary btn-rounded mt-0" data-mdb-toggle="tooltip" title="View PR">
                                             <a class="text-white" href="{{ pr.pr_link }}"><i class="fas fa-eye"></i></a>
                                         </button>
+                                        {% if pr.state == pr.ACCEPTED %}
+                                            <a class="btn btn-rounded btn-success">{{ pr.get_state_display }}</a>
+                                            <form method="get" action="">
+                                                <a class="btn btn-primary btn-success" data-mdb-toggle="tooltip" title="Bonus Points">{{ pr.bonus }}</a>
+                                                <a class="btn btn-primary btn-danger" data-mdb-toggle="tooltip" title="Penalty Points">{{ pr.penalty }}</a>
+                                                <a class="btn btn-primary" data-mdb-toggle="tooltip" title="Remark">{{ pr.remark }}</a>
+                                            </form>
+                                        {% elif pr.state == pr.REJECTED %}
+                                            <a class="btn btn-rounded btn-danger">{{ pr.get_state_display }}</a>
+                                            <form method="get" action="">
+                                                <a class="btn btn-primary btn-success" data-mdb-toggle="tooltip" title="Bonus Points">{{ pr.bonus }}</a>
+                                                <a class="btn btn-primary btn-danger" data-mdb-toggle="tooltip" title="Penalty Points">{{ pr.penalty }}</a>
+                                                <a class="btn btn-primary" data-mdb-toggle="tooltip" title="Remark">{{ pr.remark }}</a>
+                                            </form>
+                                        {% elif pr.state == pr.PENDING_VERIFICATION %}
+                                            <a class="btn btn-rounded btn-warning">{{ pr.get_state_display }}</a>
+                                            <button class="btn btn-primary btn-rounded mt-0" data-mdb-toggle="tooltip" title="Verify PR" id="frmbtn" onclick="showfrm()" type="button">
+                                                Verify <i class="fas fa-caret-down"></i>
+                                            </button>
+                                            <form method="get" action="{% url 'judge_pr' pr.pk %}" id="frm">
+                                                <a class="btn btn-primary btn-success" data-mdb-toggle="tooltip" title="Bonus Points">{{ judge_form.bonus }}</a>
+                                                <a class="btn btn-primary btn-danger" data-mdb-toggle="tooltip" title="Penalty Points">{{ judge_form.penalty }}</a>
+                                                <a class="btn btn-primary" data-mdb-toggle="tooltip" title="Remark">{{ judge_form.remark }}</a>
+                                                <button class="btn btn-success mt-0" type="submit" name="accept">Accept</button>
+                                                <button class="btn btn-danger mt-0" type="submit" name="reject">Reject</button>
+                                            </form>
+                                        {% endif %}
+
+                                        
                                     </div>
                                 </div>
                             </div>
                         {% endfor %}
                     </div>
                 </div>
-
-                <div class="text-center"><h1 class="display-6 text-white"><b>Issue Assignment Requests</b></h1></div>
-
-                <div class="container-flow p-3" >
+                <div class="container-flow p-3 tab-pane fade" id="ex1-tabs-2" role="tabpanel" aria-labelledby="ex1-tab-2">
                     <div class="row row-cols-1 row-cols-md-2">
                         {% for request in assignment_requests_for_mentor %}
                             <div class="col">
@@ -260,7 +347,9 @@ Profile @{{ native_profile.user.username }}
                                                 </a>
                                             {% endif %}
                                         </p>
-
+                                        {% if request.state == request.PENDING_VERIFICATION %}
+                                        {{ request.requested_at | timesince }} ago
+                                        {% endif %}
                                   </div>
                                     <div class="card-footer text-muted">
                                         {% if request.state == request.ACCEPTED %}
@@ -284,10 +373,7 @@ Profile @{{ native_profile.user.username }}
                         {% endfor %}
                     </div>
                 </div>
-
-                <div class="text-center"><h1 class="display-6 text-white"><b>All Issues Under Me</b></h1></div>
-
-                <div class="container-flow p-3" >
+                <div class="container-flow p-3 tab-pane fade" id="ex1-tabs-3" role="tabpanel" aria-labelledby="ex1-tab-3">
                     <div class="row row-cols-1 row-cols-md-2">
                         {% for issue in mentored_issues %}
                             <div class="col">
@@ -325,6 +411,7 @@ Profile @{{ native_profile.user.username }}
                                 </div>
                             </div>
                         {% endfor %}
+                        </div>
                     </div>
                 </div>
 
@@ -338,6 +425,21 @@ Profile @{{ native_profile.user.username }}
 {% endblock %}
 
 {% block javascript %}
+    <script>
+        function showfrm() {
+            const btn = document.getElementById('frmbtn');
+
+            btn.addEventListener('click', () => {
+            const form = document.getElementById('frm');
+
+            if (form.style.display === 'none') {
+                form.style.display = 'block';
+            } else {
+                form.style.display = 'none';
+            }
+            });
+        }
+    </script>
     {% if user.username == native_profile.user.username and user.userprofile.role == user.userprofile.STUDENT %}
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script>
@@ -413,7 +515,7 @@ Profile @{{ native_profile.user.username }}
                         $('.edit-linkedin-success').text('Linkedin ID has been edited successfully!');
                     }
                     else
-                        $('.edit-linkedin-error').text('Please try again later!');
+                        $('.edit-linkedin-error').text('Enter valid LinkedIn ID!');
                 });
             }
 

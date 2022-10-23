@@ -20,6 +20,17 @@
     {# TODO:ISSUE Remove all Inline Styles and move to External CSS File #}
     {# TODO:ISSUE Currently Navbar vanishes when Browser Window Size is reduced, fix this #}
 {#    <div class="text-center"><h1 class="display-6 text-white"><b>All Issues</b></h1></div>#}
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+    <symbol id="success" fill="currentColor" viewBox="0 0 16 16">
+    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+    </symbol>
+</svg>
+{% for message in messages %}
+<div id="msg" class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+    <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#{{ message.tags }}"/></svg> {{ message }}
+    <button type="button" onclick="removeMessage()" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
     <div class="container-flow p-3" >
     <div class="row row-cols-1 row-cols-md-1">
                 <div class="col">
@@ -75,9 +86,6 @@
                 <div class="col align-self-center"><i class="lni lni-list"></i></div>
             </div>
         </div>
-        <!-- <button type="button" class="btn btn-lg btn-toggle" data-toggle="button" aria-pressed="false" autocomplete="off" id="toggle-view">
-            <div>toggle</div>
-        </button> -->
 
         <div id="cardview">
             <div class="row row-cols-1 row-cols-md-2 infinite-container">
@@ -103,11 +111,15 @@
                                 <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Mentor">@{{ issue.mentor }}</a>
                                 <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Level">{{ issue.get_level_display }}</a>
                                 <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Points">{{ issue.points }}</a>
+                                {% if issue.bonus_pt != 0 %}
+                                    <a class="btn btn-rounded btn-info" data-mdb-toggle="tooltip" title="Bonus" style="background-color:#FF1493 !important;">{{ issue.bonus_pt }}</a>
+                                {% endif %}
                                 {% if issue.is_restricted %}
                                     <a class="btn btn-rounded btn-warning" data-mdb-toggle="tooltip" title="Restricted">
                                         <i class="fas fa-exclamation-triangle"></i>
                                     </a>
                                 {% endif %}
+                                
                             </p>
 
                         </div>
@@ -123,9 +135,33 @@
                             {% else %}
                                 <a class="btn btn-rounded btn-danger">{{ issue.get_state_display }}</a>
                             {% endif %}
+                            <a href="{% url 'like_issue' issue.pk %}"><button data-mdb-toggle="tooltip" title="Like" class="btn btn-rounded btn-primary" id="liveToastBtnlike{{issue.pk}}"><i class="fa-regular fa-thumbs-up fs-6 text-light">  {{issue.likes}}</i></button></a>
+                            <a href="{% url 'dislike_issue' issue.pk %}"><button data-mdb-toggle="tooltip" title="Dislike" class="btn btn-rounded btn-danger" id="liveToastBtndislike{{issue.pk}}"><i class="fa-regular fa-thumbs-down fs-6 text-light">  {{issue.dislikes}}</i></button></a>
                         </div>
                     </div>
                 </div>
+                <script>
+                    var option = {
+                        animation: true,
+                        delay: 2000
+                    };
+                    document.getElementById("liveToastBtnlike{{issue.pk}}").onclick=function() {
+                        var myAlert = document.getElementById('liveToastlike')
+                        var bsAlert = new bootstrap.Toast(myAlert, option);
+                        bsAlert.show();
+                    }
+                </script>
+                <script>
+                    var option = {
+                        animation: true,
+                        delay: 2000
+                    };
+                    document.getElementById("liveToastBtndislike{{issue.pk}}").onclick=function() {
+                        var myAlert = document.getElementById('liveToastdislike')
+                        var bsAlert = new bootstrap.Toast(myAlert, option);
+                        bsAlert.show();
+                    }
+                </script>
                 {% endfor %}
             </div>
             {% if issues.has_next %}
@@ -180,18 +216,59 @@
                                             Request Assignment
                                         </a>
                                     </button>
+                                    <a href="{% url 'like_issue' issue.pk %}"><button data-mdb-toggle="tooltip" title="Like" class="btn btn-rounded btn-primary" id="liveToastBtnlike1{{issue.pk}}"><i class="fa-regular fa-thumbs-up fs-6 text-light">  {{issue.likes}}</i></button></a>
+                                    <a href="{% url 'dislike_issue' issue.pk %}"><button data-mdb-toggle="tooltip" title="Dislike" class="btn btn-rounded btn-danger" id="liveToastBtndislike2{{issue.pk}}"><i class="fa-regular fa-thumbs-down fs-6 text-light">  {{issue.dislikes}}</i></button></a>
                                 {% else %}
                                     <a class="btn btn-rounded btn-danger">{{ issue.get_state_display }}</a>
                                 {% endif %}
                             </td>
                         </tr>
                         </tbody>
+                        <script>
+                            var option = {
+                                animation: true,
+                                delay: 2000
+                            };
+                            document.getElementById("liveToastBtnlike1{{issue.pk}}").onclick=function() {
+                                var myAlert = document.getElementById('liveToastlike')
+                                var bsAlert = new bootstrap.Toast(myAlert, option);
+                                bsAlert.show();
+                            }
+                        </script>
+                        <script>
+                            var option = {
+                                animation: true,
+                                delay: 2000
+                            };
+                            document.getElementById("liveToastBtndislike2{{issue.pk}}").onclick=function() {
+                                var myAlert = document.getElementById('liveToastdislike')
+                                var bsAlert = new bootstrap.Toast(myAlert, option);
+                                bsAlert.show();
+                            }
+                        </script>
                     {% endfor %}
                 </table>
             </div>
         </div>
     </div>
-
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="liveToastlike" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+            <strong class="me-auto fs-5">You liked this Issue</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            
+        </div>
+    </div>
+   <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="liveToastdislike" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+            <strong class="me-auto fs-5">You disliked this Isssue</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            
+        </div>
+    </div>
 {% endblock %}
 
 {% block javascript %}
@@ -201,6 +278,7 @@
         $("#tabularview, #cardview").toggle();
     });
 </script>
+
 
 <script>
     var infinite = new Waypoint.Infinite({

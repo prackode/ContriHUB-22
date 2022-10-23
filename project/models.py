@@ -1,9 +1,9 @@
-from email.policy import default
 from django.db import models
 from django.contrib.auth import get_user_model
 from contrihub.settings import MAX_SIMULTANEOUS_ISSUE, DAYS_PER_ISSUE_FREE, DAYS_PER_ISSUE_EASY, \
     DAYS_PER_ISSUE_MEDIUM, DAYS_PER_ISSUE_HARD, DAYS_PER_ISSUE_VERY_EASY
 from django.utils import timezone
+from user_profile.models import UserProfile
 
 User = get_user_model()
 
@@ -77,6 +77,13 @@ class Issue(models.Model):
 
     # Restricted only for BTech 2nd yr and MCA 2nd yr.
     is_restricted = models.BooleanField(verbose_name='Is Restricted', default=False)
+
+    likes = models.IntegerField(default=0)
+
+    dislikes = models.IntegerField(default=0)
+
+    # Bonus Points
+    bonus_pt = models.IntegerField(verbose_name="Bonus Points", default=0)
 
     def __str__(self):
         return self.title
@@ -166,10 +173,12 @@ class PullRequest(models.Model):
 
     submitted_at = models.DateTimeField(verbose_name="Submitted At", default=timezone.now)
 
+    remark = models.CharField(verbose_name="remark", max_length=100,  blank=True, null=True)
+
     def __str__(self):
         return f"{self.contributor}_{self.issue}"
 
-    def accept(self, bonus=0, penalty=0):
+    def accept(self, bonus=0, penalty=0, remark=''):
         """
         Method to accept (verify) PR.
         :param bonus:
@@ -181,6 +190,7 @@ class PullRequest(models.Model):
         self.state = self.ACCEPTED
         self.bonus = int(bonus)
         self.penalty = int(penalty)
+        self.remark = remark
         self.save()
 
         # Updating related Issue
@@ -189,7 +199,7 @@ class PullRequest(models.Model):
 
         # Updating Contributor's Profile
         contributor_profile = self.contributor.userprofile
-        contributor_profile.total_points += int(self.issue.points)
+        contributor_profile.total_points += int(self.issue.points) + int(bonus) - int(penalty)
         contributor_profile.bonus_points += int(bonus)
         contributor_profile.deducted_points += int(penalty)
         contributor_profile.save()
@@ -200,7 +210,7 @@ class PullRequest(models.Model):
         except AttributeError:
             pass
 
-    def reject(self, bonus=0, penalty=0):
+    def reject(self, bonus=0, penalty=0, remark=''):
         """
         Method to reject (verify) PR.
         :param bonus:
@@ -212,10 +222,12 @@ class PullRequest(models.Model):
         self.state = self.REJECTED
         self.bonus = int(bonus)
         self.penalty = int(penalty)
+        self.remark = remark
         self.save()
 
         # Updating Contributor's Profile
         contributor_profile = self.contributor.userprofile
+        contributor_profile.total_points += int(bonus) - int(penalty)
         contributor_profile.bonus_points += int(bonus)
         contributor_profile.deducted_points += int(penalty)
         contributor_profile.save()
@@ -240,6 +252,8 @@ class IssueAssignmentRequest(models.Model):
     requester = models.ForeignKey(User, on_delete=models.CASCADE)
 
     state = models.PositiveSmallIntegerField(verbose_name="State", choices=STATES, default=PENDING_VERIFICATION)
+
+    requested_at = models.DateTimeField(verbose_name="Requested At", default=timezone.now)
 
     def __str__(self):
         return f"{self.requester}_{self.issue}"
@@ -297,3 +311,14 @@ class ActiveIssue(models.Model):
     #  places.
     def get_remaining_time(self):
         return self.assigned_at + timezone.timedelta(days=self.issue.get_issue_days_limit())
+
+
+class Like(models.Model):
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='user_like')
+    issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name='issue_like')
+
+
+class Dislike(models.Model):
+
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='user_dislike')
+    issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name='issue_dislike')

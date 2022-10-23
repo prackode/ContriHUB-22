@@ -4,10 +4,13 @@ from django.contrib.auth.decorators import login_required
 from project.models import Issue, PullRequest, IssueAssignmentRequest, ActiveIssue
 from .forms import UserProfileForm
 from .models import UserProfile
-from home.helpers import send_email_to_admin
+from home.helpers import EmailThread_to_admin
 from helper import complete_profile_required, check_issue_time_limit
-from project.forms import PRSubmissionForm
+from project.forms import PRJudgeForm, PRSubmissionForm
+from django.contrib import messages
 import json
+import re
+from itertools import chain
 
 User = get_user_model()
 
@@ -38,10 +41,25 @@ def profile(request, username):
             active_issues = ActiveIssue.objects.filter(contributor=user)
 
             mentored_issues = Issue.objects.filter(mentor=user)
+
             assignment_requests_for_mentor = IssueAssignmentRequest.objects.filter(issue__mentor=user)
+            accepted_assignment_requests_for_mentor = assignment_requests_for_mentor.filter(state=1)
+            rejected_assignment_requests_for_mentor = assignment_requests_for_mentor.filter(state=2)
+            pending_assignment_requests_for_mentor = assignment_requests_for_mentor.filter(state=3)\
+                                                                                   .order_by("requested_at")
+            assignment_requests_for_mentor = chain(pending_assignment_requests_for_mentor,
+                                                   accepted_assignment_requests_for_mentor,
+                                                   rejected_assignment_requests_for_mentor)
+
             pr_requests_for_mentor = PullRequest.objects.filter(issue__mentor=user)
+            accepted_pr_requests_for_mentor = pr_requests_for_mentor.filter(state=1)
+            rejected_pr_requests_for_mentor = pr_requests_for_mentor.filter(state=2)
+            pending_pr_requests_for_mentor = pr_requests_for_mentor.filter(state=3).order_by("submitted_at")
+            pr_requests_for_mentor = chain(pending_pr_requests_for_mentor,
+                                           accepted_pr_requests_for_mentor, rejected_pr_requests_for_mentor)
 
             pr_form = PRSubmissionForm()
+            judge_form = PRJudgeForm()
 
             context = {
                 "student_years": UserProfile.YEARS,
@@ -53,6 +71,7 @@ def profile(request, username):
                 "assignment_requests_by_student": assignment_requests_by_student,
                 "assignment_requests_for_mentor": assignment_requests_for_mentor,
                 'pr_form': pr_form,
+                "judge_form": judge_form,
                 "native_profile": native_profile
             }
             return render(request, 'user_profile/profile.html', context=context)
@@ -80,12 +99,23 @@ def complete(request):
         return render(request, 'user_profile/complete_profile.html', context=context)
 
     form = UserProfileForm(request.POST, instance=existing_profile)
-    if form.is_valid():
-        # TODO:ISSUE Backend Check on Registration Number
-        existing_profile = form.save(commit=False)
-        existing_profile.is_complete = True
-        existing_profile.save()
-    return HttpResponseRedirect(reverse('user_profile', kwargs={'username': request.user.username}))
+    if request.method == "POST":
+        if form.is_valid():
+            # TODO:ISSUE Backend Check on Registration Number
+            existing_profile = form.save(commit=False)
+            existing_profile.linkedin_id = request.POST['linkedin_id']
+            regex = (r"^https?://((www|\w\w)\.)?linkedin.com/((in/[^/]+/?)|(pub/[^/]+/((\w|\d)+/?){3}))$")
+            if re.fullmatch(regex, existing_profile.linkedin_id):
+                existing_profile.is_complete = True
+                existing_profile.save()
+                return HttpResponseRedirect(reverse('user_profile', kwargs={'username': request.user.username}))
+            else:
+                context = {
+                    'form': form,
+                }
+                existing_profile.is_complete = False
+                messages.add_message(request, messages.ERROR, "Enter valid LinkedIn id")
+                return render(request, 'user_profile/complete_profile.html', context=context)
 
 
 @complete_profile_required
@@ -98,10 +128,13 @@ def edit_linkedin_id(request):
 
             existing_profile = UserProfile.objects.get(user=request.user)
             new_linkedin_id = body['linkedin_id']
-            existing_profile.linkedin_id = new_linkedin_id
-            existing_profile.save()
-
-            return HttpResponse(status=200)
+            regex = (r"^https?://((www|\w\w)\.)?linkedin.com/((in/[^/]+/?)|(pub/[^/]+/((\w|\d)+/?){3}))$")
+            if re.fullmatch(regex, new_linkedin_id):
+                existing_profile.linkedin_id = new_linkedin_id
+                existing_profile.save()
+                return HttpResponse(status=200)
+            else:
+                return HttpResponse(status=400)
         else:
             return HttpResponse(status=400)
     except Exception:
@@ -142,7 +175,7 @@ def edit_profile(request):
                 'new_course': new_course,
                 'new_year': new_year,
             }
-            send_email_to_admin(template_path=template_path, email_context=email_context)
+            EmailThread_to_admin(template_path, email_context).start()
 
             return HttpResponse(status=200)
         else:
